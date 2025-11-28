@@ -7,7 +7,6 @@ import os
 from flask import Flask, request, jsonify
 
 from train import FakeNewsClassifier
-from preprocessing import preprocess_text
 
 
 app = Flask(__name__)
@@ -37,6 +36,7 @@ def home():
         'version': '1.0.0',
         'endpoints': {
             '/predict': 'POST - Predict if news is fake or real',
+            '/batch_predict': 'POST - Predict multiple news articles',
             '/health': 'GET - Health check endpoint'
         }
     })
@@ -164,4 +164,7 @@ def create_app():
 
 if __name__ == '__main__':
     load_model()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Debug mode should only be enabled for development
+    # In production, use a WSGI server like gunicorn
+    debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
